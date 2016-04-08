@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree. An additional grant
  * of patent rights can be found in the PATENTS file in the same directory.
  *
- * @providesModule ReactIsomorphic
+ * @providesModule React
  */
 
 'use strict';
@@ -20,8 +20,8 @@ var ReactElementValidator = require('ReactElementValidator');
 var ReactPropTypes = require('ReactPropTypes');
 var ReactVersion = require('ReactVersion');
 
-var assign = require('Object.assign');
 var onlyChild = require('onlyChild');
+var warning = require('warning');
 
 var createElement = ReactElement.createElement;
 var createFactory = ReactElement.createFactory;
@@ -31,6 +31,23 @@ if (__DEV__) {
   createElement = ReactElementValidator.createElement;
   createFactory = ReactElementValidator.createFactory;
   cloneElement = ReactElementValidator.cloneElement;
+}
+
+var __spread = Object.assign;
+
+if (__DEV__) {
+  var warned = false;
+  __spread = function() {
+    warning(
+      warned,
+      'React.__spread is deprecated and should not be used. Use ' +
+      'Object.assign directly or another helper function with similar ' +
+      'semantics. You may be seeing this warning due to your compiler. ' +
+      'See https://fb.me/react-spread-deprecation for more details.'
+    );
+    warned = true;
+    return Object.assign.apply(null, arguments);
+  };
 }
 
 var React = {
@@ -67,8 +84,8 @@ var React = {
 
   version: ReactVersion,
 
-  // Hook for JSX spread, don't use this for anything else.
-  __spread: assign,
+  // Deprecated hook for JSX spread, don't use this for anything.
+  __spread: __spread,
 };
 
 module.exports = React;
